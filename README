@@ -1,0 +1,26 @@
+To install, create table:
+1)
+CREATE TABLE IF NOT EXISTS `searches` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `model` varchar(255) NOT NULL,
+  `content_id` int(11) NOT NULL,
+  `category` varchar(255) DEFAULT NULL,
+  `content` text NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `content_id` (`content_id`),
+  KEY `model` (`model`)
+) ENGINE=MyISAM;
+
+2)
+Add the project into plugin directory.
+
+3)
+Config plugin database file
+
+Use:
+public $actsAs = array('Searchable' => array(
+        'fields' => array(
+            'descricao'
+        ),  
+        'category' => 'nome'
+    ));
