@@ -55,6 +55,7 @@ class SearchableBehavior extends ModelBehavior
         if (!isset($this->settings[$Model->alias])) {
             $this->settings[$Model->alias] = array(
                 'fields' => array_keys($Model->_schema),
+                'categorySeparator' => ' '
             );
         }
         $this->settings[$Model->alias] = array_merge(
@@ -89,14 +90,62 @@ class SearchableBehavior extends ModelBehavior
     private function getText($modelAlias, $dataArray)
     {
         $text = '';
-        foreach($dataArray[$modelAlias] as $field => $value)
+        if(is_array($this->settings[$modelAlias]['fields']))
         {
-            if(in_array($field, $this->settings[$modelAlias]['fields']))
+            foreach($this->settings[$modelAlias]['fields'] as $modelField => $fields)
             {
-                $text .= $value.' ';
+                foreach($fields as $field)
+                {
+                    if(!empty($dataArray[$modelField][$field]))
+                    {
+                        $text .= strip_tags($dataArray[$modelField][$field]).' ';
+                    }
+                }
+            }
+        }
+        else
+        {
+            foreach($dataArray[$modelAlias] as $field => $value)
+            {
+                if(in_array($field, $this->settings[$modelAlias]['fields']))
+                {
+                    $text .= strip_tags($value).' ';
+                }
             }
         }
         return self::text2Tags($text);
+    }
+
+    private function getCategory($modelAlias, $dataArray)
+    {
+        $category = array();
+        if(!empty($this->settings[$modelAlias]['category']))
+        {
+            if(is_array($this->settings[$modelAlias]['category']))
+            {
+                foreach($this->settings[$modelAlias]['category'] as $modelField => $fields)
+                {
+                    foreach($fields as $k => $field)
+                    {
+                        if(!empty($dataArray[$modelField][$field]))
+                        {
+                            $category[] = $dataArray[$modelField][$field];
+                        }
+                    }
+                }
+            }
+            else
+            {
+                foreach($dataArray[$modelAlias] as $field => $value)
+                {
+                    if(in_array($field, $this->settings[$modelAlias]['category']))
+                    {
+                        $category[] = $value;
+                    }
+                }
+            }
+        }
+        return implode($this->settings[$modelAlias]['categorySeparator'],$category);
     }
 
     /**
@@ -107,7 +156,7 @@ class SearchableBehavior extends ModelBehavior
      */
     public function afterSave(&$Model,$created)
     {
-        App::import('model','Search');
+        App::import('model','Searchable.Search');
         $Search = new Search;
         $modelId = $Model->id;
         $modelName = $Model->alias;
@@ -115,14 +164,7 @@ class SearchableBehavior extends ModelBehavior
         {
             $Search->deleteAll(array('model'=>$modelName,'content_id'=>$modelId));
         }
-        if(!empty($this->settings[$Model->alias]['category']))
-        {
-            $category = $Model->data[$Model->alias][$this->settings[$Model->alias]['category']];
-        }
-        else
-        {
-            $category = '';
-        }
+        $category = $this->getCategory($Model->alias, $Model->data);
         $content = $this->getText($Model->alias, $Model->data);
         $Search->set(array(
             'model' => $modelName,

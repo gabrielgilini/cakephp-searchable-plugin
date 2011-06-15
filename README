@@ -20,7 +20,9 @@ Config plugin database file
 Use:
 public $actsAs = array('Searchable' => array(
         'fields' => array(
-            'descricao'
+            'Model' => array(
+                'descricao'
+            )
         ),  
         'category' => 'nome'
     ));
