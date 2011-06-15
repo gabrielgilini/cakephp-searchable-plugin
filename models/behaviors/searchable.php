@@ -94,7 +94,7 @@ class SearchableBehavior extends ModelBehavior
      * @return string content on tags format
      * @access private
      */
-    private function getText($modelAlias, $dataArray)
+    private function getTextFromDataArray($modelAlias, $dataArray)
     {
         $text = '';
         if(is_array($this->settings[$modelAlias]['fields']))
@@ -130,7 +130,7 @@ class SearchableBehavior extends ModelBehavior
      * @return string categoy
      * @access private
      */
-    private function getCategory($modelAlias, $dataArray)
+    private function getCategoryFromDataArray($modelAlias, $dataArray)
     {
         $category = array();
         if(!empty($this->settings[$modelAlias]['category']))
@@ -162,6 +162,16 @@ class SearchableBehavior extends ModelBehavior
         return implode($this->settings[$modelAlias]['categorySeparator'],$category);
     }
 
+    private function getDisplayFieldFromDataArray($modelAlias, $dataArray)
+    {
+        $displayField = null;
+        if(!empty($this->settings[$modelAlias]['displayField']))
+        {
+            $displayField = $dataArray[$this->settings[$modelAlias]['displayField']['model']][$this->settings[$modelAlias]['displayField']['field']];
+        }
+        return $displayField;
+    }
+
     /**
      * Run after a save() operation. Get data and send to save in search table.
      * @param object $Model Model on which we are saving
@@ -170,29 +180,40 @@ class SearchableBehavior extends ModelBehavior
      */
     public function afterSave(&$Model,$created)
     {
-        App::import('model','Searchable.Search');
-        $Search = new Search;
-        $modelId = $Model->id;
-        $modelName = $Model->alias;
-        if(!$created)
+        if(!empty($Model->data[$this->settings[$Model->alias]['displayField']['model']][$this->settings[$Model->alias]['displayField']['field']]))
         {
-            $Search->deleteAll(array('model'=>$modelName,'content_id'=>$modelId));
+            App::import('model','Searchable.Search');
+            $Search = new Search;
+            $modelId = $Model->id;
+            $modelName = $Model->alias;
+            if(!$created)
+            {
+                $Search->deleteAll(array('model'=>$modelName,'content_id'=>$modelId));
+            }
+            $category = $this->getCategoryFromDataArray($Model->alias, $Model->data);
+            $content = $this->getTextFromDataArray($Model->alias, $Model->data);
+            $displayField = $this->getDisplayFieldFromDataArray($Model->alias,$Model->data);
+            $Search->set(array(
+                'model' => $modelName,
+                'content_id' => $modelId,
+                'content' => $content,
+                'category' => $category,
+                'display_field' => $displayField
+            ));
+            return $Search->save();
         }
-        $category = $this->getCategory($Model->alias, $Model->data);
-        $content = $this->getText($Model->alias, $Model->data);
-        $Search->set(array(
-            'model' => $modelName,
-            'content_id' => $modelId,
-            'content' => $content,
-            'category' => $category
-        ));
-        return $Search->save();
     }
 
-    public function beforeDelete(&$Model,$cascade)
+    /**
+     * Run after a delete() operation. Remove content from search table
+     * @param object $Model Model on which we are deleting
+     * @access public
+     */
+    public function beforeDelete(&$Model)
     {
         App::import('model','Searchable.Search');
         $Search = new Search;
         return $Search->deleteAll(array('model'=>$Model->alias,'content_id'=>$Model->id));
     }
+
 }
