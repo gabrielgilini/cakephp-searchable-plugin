@@ -21,8 +21,11 @@ Use:
 public $actsAs = array('Searchable' => array(
         'fields' => array(
             'Model' => array(
-                'descricao'
+                'contentField'
             )
         ),  
-        'category' => 'nome'
+        'category' => array(
+            'Model' => array(
+                'categoryField'
+            )
     ));
