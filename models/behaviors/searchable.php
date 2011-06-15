@@ -188,4 +188,11 @@ class SearchableBehavior extends ModelBehavior
         ));
         return $Search->save();
     }
+
+    public function beforeDelete(&$Model,$cascade)
+    {
+        App::import('model','Searchable.Search');
+        $Search = new Search;
+        return $Search->deleteAll(array('model'=>$Model->alias,'content_id'=>$Model->id));
+    }
 }
