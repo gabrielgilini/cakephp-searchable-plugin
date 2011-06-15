@@ -87,6 +87,13 @@ class SearchableBehavior extends ModelBehavior
         return implode(' ', array_keys($tokens));
     }
 
+    /**
+     * Get text content from data array. Fields can be filter by setting's array
+     * @param string $modelAlias Model's name on which we are saving
+     * @param array $dataArray save data array
+     * @return string content on tags format
+     * @access private
+     */
     private function getText($modelAlias, $dataArray)
     {
         $text = '';
@@ -116,6 +123,13 @@ class SearchableBehavior extends ModelBehavior
         return self::text2Tags($text);
     }
 
+    /**
+     * Get text category from data array. Fields can be filter by setting's array
+     * @param string $modelAlias Model's name on which we are saving
+     * @param array $dataArray save data array
+     * @return string categoy
+     * @access private
+     */
     private function getCategory($modelAlias, $dataArray)
     {
         $category = array();
