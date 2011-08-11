@@ -5,7 +5,10 @@ class SearchesController extends AppController
 
     public $paginate = array(
         'Search' => array(
-            'limit' => 25
+            'limit' => 25,
+            'order' => array(
+                'Search.created' => 'desc'
+            )
         )
     );
     
