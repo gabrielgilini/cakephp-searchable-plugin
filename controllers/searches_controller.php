@@ -22,6 +22,7 @@ class SearchesController extends AppController
         $conditions = array();
         $queryString = array();
         $page = 1;
+        $limit = 25;
         if(!empty($_GET['content']))
         {
             $conditions[] = "MATCH(Search.content) AGAINST('{$_GET['content']}')";
@@ -56,10 +57,10 @@ class SearchesController extends AppController
         {
             $this->paginate['Search']['limit'] = $_GET['limit'];
             $queryString[] = 'limit='.urlencode($_GET['limit']);
+            $limit = $_GET['limit'];
         }
-        $this->set('page',$page);
         $queryString = '?'.implode('&',$queryString);
-        $this->set('queryString',$queryString);
+        $this->set(compact('queryString','page','limit'));
         $this->set('results',$this->paginate('Search',$conditions));
     }
 }
