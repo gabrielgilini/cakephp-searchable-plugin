@@ -23,9 +23,16 @@ class SearchesController extends AppController
         $queryString = array();
         $page = 1;
         $limit = 25;
+        $query = '';
         if(!empty($_GET['content']))
         {
-            $conditions[] = "MATCH(Search.content) AGAINST('{$_GET['content']}')";
+            $query = explode(' ',$_GET['content']);
+            foreach($query as &$word)
+            {
+                $word = "+{$word}*";
+            }
+            $query = implode(' ',$query);
+            $conditions[] = "MATCH(Search.content) AGAINST('{$query}' IN BOOLEAN MODE)";
             $queryString[] = 'content='.urlencode($_GET['content']);
         }
         if(!empty($_GET['category']))
@@ -59,6 +66,20 @@ class SearchesController extends AppController
             $queryString[] = 'limit='.urlencode($_GET['limit']);
             $limit = $_GET['limit'];
         }
+        $this->paginate['Search']['fields'] = array(
+            'Search.id',
+            'Search.model',
+            'Search.content_id',
+            'Search.category',
+            'Search.content',
+            'Search.display_field',
+            'Search.created',
+            "MATCH(Search.content) AGAINST ('{$query}' IN BOOLEAN MODE) AS rel"
+        );
+        $this->paginate['Search']['order'] = array(
+            'Search.created' => 'DESC',
+            'rel' => 'DESC'
+        );
         $queryString = '?'.implode('&',$queryString);
         $this->set(compact('queryString','page','limit'));
         $this->set('results',$this->paginate('Search',$conditions));

@@ -161,6 +161,16 @@ class SearchableBehavior extends ModelBehavior
         }
         return implode($this->settings[$modelAlias]['categorySeparator'],$category);
     }
+    
+    private function getCreatedFromDataArray($modelAlias, $dataArray)
+    {
+        $created = date('Y-m-d h:i:s');
+        if(!empty($this->settings[$modelAlias]['created']))
+        {
+            $created = $dataArray[$this->settings[$modelAlias]['displayField']['model']]['created'];
+        }
+        return $created;
+    }
 
     private function getDisplayFieldFromDataArray($modelAlias, $dataArray)
     {
@@ -193,6 +203,7 @@ class SearchableBehavior extends ModelBehavior
             $category = $this->getCategoryFromDataArray($Model->alias, $Model->data);
             $content = $this->getTextFromDataArray($Model->alias, $Model->data);
             $displayField = $this->getDisplayFieldFromDataArray($Model->alias,$Model->data);
+            $created = $this->getCreatedFromDataArray($Model->alias, $Model->data);
             $Search->set(array(
                 'model' => $modelName,
                 'content_id' => $modelId,
