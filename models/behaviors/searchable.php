@@ -165,9 +165,10 @@ class SearchableBehavior extends ModelBehavior
     private function getCreatedFromDataArray($modelAlias, $dataArray)
     {
         $created = date('Y-m-d h:i:s');
-        if(!empty($this->settings[$modelAlias]['created']))
+        if(!empty($this->settings[$modelAlias]['createdModel']))
         {
-            $created = $dataArray[$this->settings[$modelAlias]['displayField']['model']]['created'];
+            $model = !empty($this->settings[$modelAlias]['createdModel']) ? $this->settings[$modelAlias]['createdModel'] : $modelAlias;
+            $created = $dataArray[$model]['created'];
         }
         return $created;
     }
@@ -192,6 +193,13 @@ class SearchableBehavior extends ModelBehavior
     {
         if(!empty($Model->data[$this->settings[$Model->alias]['displayField']['model']][$this->settings[$Model->alias]['displayField']['field']]))
         {
+            if(
+                !empty($this->settings[$Model->alias]['scope']) &&
+                $Model->data[ $this->settings[$Model->alias]['scope']['model'] ][ $this->settings[$Model->alias]['scope']['field'] ] != $this->settings[$Model->alias]['scope']['value']
+            )
+            {
+                return true;
+            }
             App::import('model','Searchable.Search');
             $Search = new Search;
             $modelId = $Model->id;
@@ -209,7 +217,8 @@ class SearchableBehavior extends ModelBehavior
                 'content_id' => $modelId,
                 'content' => $content,
                 'category' => $category,
-                'display_field' => $displayField
+                'display_field' => $displayField,
+                'created' => $created
             ));
             return $Search->save();
         }

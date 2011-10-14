@@ -29,7 +29,7 @@ class SearchesController extends AppController
             $query = explode(' ',$_GET['content']);
             foreach($query as &$word)
             {
-                $word = "+{$word}*";
+                $word = "+{$word}";
             }
             $query = implode(' ',$query);
             $conditions[] = "MATCH(Search.content) AGAINST('{$query}' IN BOOLEAN MODE)";
