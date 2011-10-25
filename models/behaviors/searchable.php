@@ -143,7 +143,7 @@ class SearchableBehavior extends ModelBehavior
                     {
                         if(!empty($dataArray[$modelField][$field]))
                         {
-                            $category[] = $dataArray[$modelField][$field];
+                            $category[] = $modelAlias.'-'.$dataArray[$modelField][$field];
                         }
                     }
                 }
@@ -154,7 +154,7 @@ class SearchableBehavior extends ModelBehavior
                 {
                     if(in_array($field, $this->settings[$modelAlias]['category']))
                     {
-                        $category[] = $value;
+                        $category[] = $modelAlias.'-'.$value;
                     }
                 }
             }
