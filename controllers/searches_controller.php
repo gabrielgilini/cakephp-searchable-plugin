@@ -27,10 +27,21 @@ class SearchesController extends AppController
         if(!empty($_GET['content']))
         {
             $query = explode(' ',$_GET['content']);
+            if(count($query) > 2)
+            {
+                $fullQuery = '"' . implode(' ', $query) . '"';
+            }
+
             foreach($query as &$word)
             {
                 $word = "+{$word}";
             }
+
+            if(!empty($fullQuery))
+            {
+                $query[] = $fullQuery;
+            }
+
             $query = implode(' ',$query);
             $conditions[] = "MATCH(Search.content) AGAINST('{$query}' IN BOOLEAN MODE)";
             $queryString[] = 'content='.urlencode($_GET['content']);
