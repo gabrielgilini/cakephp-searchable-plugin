@@ -59,7 +59,7 @@ class SearchableBehavior extends ModelBehavior
             );
         }
         $this->settings[$Model->alias] = array_merge(
-            $this->settings[$Model->alias], 
+            $this->settings[$Model->alias],
             (array)$settings
         );
     }
@@ -105,7 +105,7 @@ class SearchableBehavior extends ModelBehavior
                 {
                     if(!empty($dataArray[$modelField][$field]))
                     {
-                        $text .= strip_tags($dataArray[$modelField][$field]).' ';
+                        $text .= strip_tags(html_entity_decode($dataArray[$modelField][$field])).' ';
                     }
                 }
             }
@@ -116,11 +116,11 @@ class SearchableBehavior extends ModelBehavior
             {
                 if(in_array($field, $this->settings[$modelAlias]['fields']))
                 {
-                    $text .= strip_tags($value).' ';
+                    $text .= strip_tags(html_entity_decode($value)).' ';
                 }
             }
         }
-        return self::text2Tags($text);
+        return $text;
     }
 
     /**
@@ -161,7 +161,7 @@ class SearchableBehavior extends ModelBehavior
         }
         return implode($this->settings[$modelAlias]['categorySeparator'],$category);
     }
-    
+
     private function getCreatedFromDataArray($modelAlias, $dataArray)
     {
         $created = date('Y-m-d h:i:s');
