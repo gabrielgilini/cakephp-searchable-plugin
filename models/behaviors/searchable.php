@@ -105,7 +105,7 @@ class SearchableBehavior extends ModelBehavior
                 {
                     if(!empty($dataArray[$modelField][$field]))
                     {
-                        $text .= strip_tags(html_entity_decode($dataArray[$modelField][$field])).' ';
+                        $text .= strip_tags(html_entity_decode($dataArray[$modelField][$field], null, 'UTF-8')).' ';
                     }
                 }
             }
@@ -116,7 +116,7 @@ class SearchableBehavior extends ModelBehavior
             {
                 if(in_array($field, $this->settings[$modelAlias]['fields']))
                 {
-                    $text .= strip_tags(html_entity_decode($value)).' ';
+                    $text .= strip_tags(html_entity_decode($value, null, 'UTF-8')).' ';
                 }
             }
         }
