@@ -4,7 +4,7 @@ Create a simple site search to find some data in multiple application models.
 This search uses Fulltext indexes through one auxiliar table which contains all configured models data.
 You can change and create your own view page and customize fields which will be saved, seached and displayed through your different modelds.
 
-To install, create table:
+To install, configure database.php and create table:
 1)
 CREATE TABLE IF NOT EXISTS `ccsp_searches` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
