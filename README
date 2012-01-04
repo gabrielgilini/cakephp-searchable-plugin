@@ -37,6 +37,6 @@ public $actsAs = array('Searchable' => array(
             'Model' => array(
                 'categoryField'
             )
+    ));
 
 Please visit wiki to config e usage information!
-    ));
