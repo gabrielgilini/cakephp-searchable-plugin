@@ -11,12 +11,12 @@ class SearchesController extends AppController
             )
         )
     );
-    
+
     function beforeFilter()
     {
         $this->Auth->allow('*');
     }
-    
+
     public function index()
     {
         $conditions = array();
@@ -35,6 +35,10 @@ class SearchesController extends AppController
             foreach($query as &$word)
             {
                 $word = "+{$word}";
+                if(strlen($word) > 2)
+                {
+                    $word = "{$word}*";
+                }
             }
 
             if(!empty($fullQuery))
