@@ -19,6 +19,11 @@ class SearchesController extends AppController
 
     public function index()
     {
+        $this->set($this->search());
+    }
+
+    public function search()
+    {
         $conditions = array();
         $queryString = array();
         $page = 1;
@@ -95,8 +100,12 @@ class SearchesController extends AppController
             'rel' => 'DESC',
             'Search.created' => 'DESC'
         );
-        $queryString = '?'.implode('&',$queryString);
-        $this->set(compact('queryString','page','limit'));
-        $this->set('results',$this->paginate('Search',$conditions));
+
+        return array(
+            'results' => $this->paginate('Search',$conditions),
+            'queryString' => '?'.implode('&',$queryString),
+            'page' => $page,
+            'limit' => $limit
+        );
     }
 }
