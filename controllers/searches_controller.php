@@ -11,13 +11,18 @@ class SearchesController extends AppController
             )
         )
     );
-    
+
     function beforeFilter()
     {
         $this->Auth->allow('*');
     }
-    
+
     public function index()
+    {
+        $this->set($this->search());
+    }
+
+    public function search()
     {
         $conditions = array();
         $queryString = array();
@@ -35,6 +40,10 @@ class SearchesController extends AppController
             foreach($query as &$word)
             {
                 $word = "+{$word}";
+                if(strlen($word) > 2)
+                {
+                    $word = "{$word}*";
+                }
             }
 
             if(!empty($fullQuery))
@@ -91,8 +100,12 @@ class SearchesController extends AppController
             'rel' => 'DESC',
             'Search.created' => 'DESC'
         );
-        $queryString = '?'.implode('&',$queryString);
-        $this->set(compact('queryString','page','limit'));
-        $this->set('results',$this->paginate('Search',$conditions));
+
+        return array(
+            'results' => $this->paginate('Search',$conditions),
+            'queryString' => '?'.implode('&',$queryString),
+            'page' => $page,
+            'limit' => $limit
+        );
     }
 }
