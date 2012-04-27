@@ -26,7 +26,8 @@ class SearchesController extends AppController
         $query = '';
         if(!empty($_GET['content']))
         {
-            $query = explode(' ',$_GET['content']);
+            $content = strip_tags($_GET['content']);
+            $query = explode(' ', $content);
             if(count($query) > 2)
             {
                 $fullQuery = '"' . implode(' ', $query) . '"';
@@ -44,7 +45,7 @@ class SearchesController extends AppController
 
             $query = implode(' ',$query);
             $conditions[] = "MATCH(Search.content) AGAINST('{$query}' IN BOOLEAN MODE)";
-            $queryString[] = 'content='.urlencode($_GET['content']);
+            $queryString[] = 'content='.urlencode($content);
         }
         if(!empty($_GET['category']))
         {
@@ -63,19 +64,22 @@ class SearchesController extends AppController
         }
         if(!empty($_GET['model']))
         {
-            $conditions['Search.model'] = $_GET['model'];
-            $queryString[] = 'model='.urlencode($_GET['model']);
+            $model = strip_tags($_GET['model']);
+            $conditions['Search.model'] = $model;
+            $queryString[] = 'model='.urlencode($model);
         }
         if(!empty($_GET['page']))
         {
-            $this->paginate['Search']['page'] = $_GET['page'];
-            $page = $_GET['page'];
+            $queryStringPage = strip_tags($_GET['page']);
+            $this->paginate['Search']['page'] = $queryStringPage;
+            $page = $queryStringPage;
         }
         if(!empty($_GET['limit']))
         {
-            $this->paginate['Search']['limit'] = $_GET['limit'];
-            $queryString[] = 'limit='.urlencode($_GET['limit']);
-            $limit = $_GET['limit'];
+            $queryStringLimit = strip_tags($_GET['limit']);
+            $this->paginate['Search']['limit'] = $queryStringLimit;
+            $queryString[] = 'limit='.urlencode($queryStringLimit);
+            $limit = $queryStringLimit;
         }
         $this->paginate['Search']['fields'] = array(
             'Search.id',
