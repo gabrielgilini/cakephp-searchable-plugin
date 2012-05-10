@@ -95,6 +95,7 @@ class SearchesController extends AppController
             'Search.created' => 'DESC',
             'rel' => 'DESC',
         );
+        
         $queryString = '?'.implode('&',$queryString);
         $this->set(compact('queryString','page','limit'));
         $this->set('results',$this->paginate('Search',$conditions));
