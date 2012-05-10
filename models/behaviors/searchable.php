@@ -172,13 +172,50 @@ class SearchableBehavior extends ModelBehavior
         }
         return $created;
     }
-
+    
+    private function _handleDisplayFieldSettings($fieldSettings, $dataArray, $modelAlias)
+    {
+        $displayField = array();
+        
+        if(!array_key_exists('model', $fieldSettings))
+        {
+            foreach($fieldSettings as $model=>$modelsFields)
+            {
+                foreach($modelsFields as $fields)
+                {
+                    if(isset($dataArray[$model][$fields]))
+                    {
+                        $displayField[$fields] = $dataArray[$model][$fields];    
+                    }
+                    elseif(isset($dataArray[$model][0][$fields]))
+                    {
+                        $displayField[$fields] = $dataArray[$model][0][$fields];
+                    }
+                }
+            }
+        }
+        else
+        {
+            $displayField['display_default'] = $dataArray[$this->settings[$modelAlias]['displayField']['model']][$this->settings[$modelAlias]['displayField']['field']];
+        }
+        
+        return json_encode($displayField);
+    }
+    
+    /**
+     * Get display field from data array. Fields can be filter by setting's array
+     * @param string $modelAlias Model's name on which we are saving
+     * @param array $dataArray save data array
+     * @return string display field
+     * @access private
+     */
     private function getDisplayFieldFromDataArray($modelAlias, $dataArray)
     {
-        $displayField = null;
+        $displayField = array();
         if(!empty($this->settings[$modelAlias]['displayField']))
         {
-            $displayField = $dataArray[$this->settings[$modelAlias]['displayField']['model']][$this->settings[$modelAlias]['displayField']['field']];
+            $displayField = $this->_handleDisplayFieldSettings($this->settings[$modelAlias]['displayField'], $dataArray, $modelAlias);
+            //$displayField = $dataArray[$this->settings[$modelAlias]['displayField']['model']][$this->settings[$modelAlias]['displayField']['field']];
         }
         return $displayField;
     }
@@ -191,15 +228,19 @@ class SearchableBehavior extends ModelBehavior
      */
     public function afterSave(&$Model,$created)
     {
-        if(!empty($Model->data[$this->settings[$Model->alias]['displayField']['model']][$this->settings[$Model->alias]['displayField']['field']]))
-        {
-            if(
+        //if(!empty($Model->data[$this->settings[$Model->alias]['displayField']['model']][$this->settings[$Model->alias]['displayField']['field']]))
+        //debug($Model->data[$this->settings[$Model->alias]]['displayField']);die;
+        //if(!empty($Model->data[$this->settings[$Model->alias]['displayField']]))
+        //{
+            //debug($Model->data[ $this->settings[$Model->alias]['scope']['model'] ][ $this->settings[$Model->alias]['scope']['field'] ]);
+            //debug($this->settings[$Model->alias]['scope']['value']);die;
+            /*if(
                 !empty($this->settings[$Model->alias]['scope']) &&
                 $Model->data[ $this->settings[$Model->alias]['scope']['model'] ][ $this->settings[$Model->alias]['scope']['field'] ] != $this->settings[$Model->alias]['scope']['value']
             )
             {
                 return true;
-            }
+            }*/
             App::import('model','Searchable.Search');
             $Search = new Search;
             $modelId = $Model->id;
@@ -221,7 +262,7 @@ class SearchableBehavior extends ModelBehavior
                 'created' => $created
             ));
             return $Search->save();
-        }
+        //}
     }
 
     /**
