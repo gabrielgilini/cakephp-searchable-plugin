@@ -241,6 +241,7 @@ class SearchableBehavior extends ModelBehavior
             {
                 return true;
             }*/
+            
             App::import('model','Searchable.Search');
             $Search = new Search;
             $modelId = $Model->id;
