@@ -92,8 +92,8 @@ class SearchesController extends AppController
             "MATCH(Search.content) AGAINST ('{$query}' IN BOOLEAN MODE) AS rel"
         );
         $this->paginate['Search']['order'] = array(
+            'Search.created' => 'DESC',
             'rel' => 'DESC',
-            'Search.created' => 'DESC'
         );
         $queryString = '?'.implode('&',$queryString);
         $this->set(compact('queryString','page','limit'));
