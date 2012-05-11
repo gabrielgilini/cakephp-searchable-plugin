@@ -53,7 +53,7 @@ class SearchesController extends AppController
             }
 
             $query = implode(' ',$query);
-            $conditions[] = "MATCH(Search.content) AGAINST('{$query}' IN BOOLEAN MODE)";
+            $conditions[] = "MATCH(Search.content) AGAINST('{".mysql_real_escape_string($query)."}' IN BOOLEAN MODE)";
             $queryString[] = 'content='.urlencode($content);
         }
         if(!empty($_GET['category']))
@@ -98,7 +98,7 @@ class SearchesController extends AppController
             'Search.content',
             'Search.display_field',
             'Search.created',
-            "MATCH(Search.content) AGAINST ('{$query}' IN BOOLEAN MODE) AS rel"
+            "MATCH(Search.content) AGAINST ('{".mysql_real_escape_string($query)."}' IN BOOLEAN MODE) AS rel"
         );
         $this->paginate['Search']['order'] = array(
             'Search.created' => 'DESC',
