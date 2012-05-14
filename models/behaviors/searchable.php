@@ -185,11 +185,11 @@ class SearchableBehavior extends ModelBehavior
                 {
                     if(isset($dataArray[$model][$fields]))
                     {
-                        $displayField[$fields] = $dataArray[$model][$fields];    
+                        $displayField[$model][$fields] = $dataArray[$model][$fields];    
                     }
                     elseif(isset($dataArray[$model][0][$fields]))
                     {
-                        $displayField[$fields] = $dataArray[$model][0][$fields];
+                        $displayField[$model][$fields] = $dataArray[$model][0][$fields];
                     }
                 }
             }
@@ -198,7 +198,6 @@ class SearchableBehavior extends ModelBehavior
         {
             $displayField['display_default'] = $dataArray[$this->settings[$modelAlias]['displayField']['model']][$this->settings[$modelAlias]['displayField']['field']];
         }
-        
         return json_encode($displayField);
     }
     
