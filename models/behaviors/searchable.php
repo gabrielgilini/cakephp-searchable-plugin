@@ -228,19 +228,15 @@ class SearchableBehavior extends ModelBehavior
      */
     public function afterSave(&$Model,$created)
     {
-        //if(!empty($Model->data[$this->settings[$Model->alias]['displayField']['model']][$this->settings[$Model->alias]['displayField']['field']]))
-        //debug($Model->data[$this->settings[$Model->alias]]['displayField']);die;
-        //if(!empty($Model->data[$this->settings[$Model->alias]['displayField']]))
-        //{
-            //debug($Model->data[ $this->settings[$Model->alias]['scope']['model'] ][ $this->settings[$Model->alias]['scope']['field'] ]);
-            //debug($this->settings[$Model->alias]['scope']['value']);die;
-            /*if(
+        if(!empty($Model->data[$this->settings[$Model->alias]['validate']['model']] [$this->settings[$Model->alias]['validate']['field']]))
+        {
+            if(
                 !empty($this->settings[$Model->alias]['scope']) &&
                 $Model->data[ $this->settings[$Model->alias]['scope']['model'] ][ $this->settings[$Model->alias]['scope']['field'] ] != $this->settings[$Model->alias]['scope']['value']
             )
             {
                 return true;
-            }*/
+            }
             
             
             App::import('model','Searchable.Search');
@@ -264,7 +260,7 @@ class SearchableBehavior extends ModelBehavior
                 'created' => $created
             ));
             return $Search->save();
-        //}
+        }
     }
 
     /**
