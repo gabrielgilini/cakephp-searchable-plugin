@@ -193,13 +193,6 @@ class SearchableBehavior extends ModelBehavior
     {
         if(!empty($Model->data[$this->settings[$Model->alias]['displayField']['model']][$this->settings[$Model->alias]['displayField']['field']]))
         {
-            if(
-                !empty($this->settings[$Model->alias]['scope']) &&
-                $Model->data[ $this->settings[$Model->alias]['scope']['model'] ][ $this->settings[$Model->alias]['scope']['field'] ] != $this->settings[$Model->alias]['scope']['value']
-            )
-            {
-                return true;
-            }
             App::import('model','Searchable.Search');
             $Search = new Search;
             $modelId = $Model->id;
@@ -207,6 +200,13 @@ class SearchableBehavior extends ModelBehavior
             if(!$created)
             {
                 $Search->deleteAll(array('model'=>$modelName,'content_id'=>$modelId));
+            }
+            if(
+                !empty($this->settings[$Model->alias]['scope']) &&
+                $Model->data[ $this->settings[$Model->alias]['scope']['model'] ][ $this->settings[$Model->alias]['scope']['field'] ] != $this->settings[$Model->alias]['scope']['value']
+            )
+            {
+                return true;
             }
             $category = $this->getCategoryFromDataArray($Model->alias, $Model->data);
             $content = $this->getTextFromDataArray($Model->alias, $Model->data);
