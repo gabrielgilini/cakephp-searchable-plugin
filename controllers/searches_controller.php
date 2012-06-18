@@ -24,6 +24,7 @@ class SearchesController extends AppController
 
     public function search()
     {
+        App::import('Lib', 'Sanitize');
         $conditions = array();
         $queryString = array();
         $page = 1;
@@ -31,7 +32,7 @@ class SearchesController extends AppController
         $query = '';
         if(!empty($_GET['content']))
         {
-            $content = strip_tags($_GET['content']);
+            $content = Sanitize::escape(strip_tags($_GET['content']));
             $query = explode(' ', $content);
             if(count($query) > 2)
             {
@@ -45,6 +46,7 @@ class SearchesController extends AppController
                 {
                     $word = "{$word}*";
                 }
+                $word = "\"{$word}\"";
             }
 
             if(!empty($fullQuery))
