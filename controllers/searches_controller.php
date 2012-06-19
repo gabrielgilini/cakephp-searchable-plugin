@@ -46,7 +46,10 @@ class SearchesController extends AppController
                 {
                     $word = "{$word}*";
                 }
-                $word = "\"{$word}\"";
+                if(strpos($word, '&') !== false)
+                {
+                    $word = "\"{$word}\"";
+                }
             }
 
             if(!empty($fullQuery))
