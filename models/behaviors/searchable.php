@@ -168,7 +168,14 @@ class SearchableBehavior extends ModelBehavior
         if(!empty($this->settings[$modelAlias]['createdModel']))
         {
             $model = !empty($this->settings[$modelAlias]['createdModel']) ? $this->settings[$modelAlias]['createdModel'] : $modelAlias;
-            $created = $dataArray[$model]['created'];
+            if(isset($dataArray[$model]['data_publicacao']))
+            {
+                $created = $dataArray[$model]['data_publicacao'];
+            }
+            else
+            {
+                $created = $dataArray[$model]['created'];    
+            }
         }
         return $created;
     }
