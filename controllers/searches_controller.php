@@ -52,6 +52,12 @@ class SearchesController extends AppController
                 }
             }
 
+            // Envolve os tokens com wildcard (*) em parênteses
+            // Assim o fulltext processa frases com 2 ou mais palavras como
+            // (palavra1* palavra2* palavra3*) OU "palavra1 palavra2 palavra3"
+            array_unshift($query, '(');
+            array_push($query, ')');
+
             if(!empty($fullQuery))
             {
                 $query[] = $fullQuery;
@@ -118,7 +124,7 @@ class SearchesController extends AppController
                 'limit' => $limit
             );
         }
-        
+
         $queryString = '?'.implode('&',$queryString);
         $this->set(compact('queryString','page','limit'));
         $this->set('results',$this->paginate('Search',$conditions));
